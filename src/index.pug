@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Shot Cut 📷 ✂
+        link( rel='stylesheet' href='./index.scss' )
+    body
+        .shots-stack
+        .dashboard
+            .view
+                .view__image
+                .view__upload-btn upload image
+            .pointer
+                .cursor
+                    include ./icons/move
+            button.shot-btn
+                include ./icons/aperture
+        input#upload( type='file' )
+        script( src='./index.ts' )

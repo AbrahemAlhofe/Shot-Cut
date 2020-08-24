@@ -1,0 +1,21 @@
+{
+  "name": "like-animation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "abrahem ali alhofe",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel serve src/index.pug --out-dir docs --public-url ./"
+  },
+  "devDependencies": {
+    "animejs": "^3.2.0",
+    "parcel-bundler": "^1.12.4",
+    "pug": "^3.0.0",
+    "sass": "^1.26.10",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "parcel-plugin-inlinesvg": "^0.1.1",
+    "react": "^16.13.1"
+  }
+}
