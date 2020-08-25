@@ -22,6 +22,36 @@ body {
   margin: 20px auto;
   width: fit-content;
 }
+.view .signature {
+  font-family: monospace;
+  text-align: center;
+  margin-top: 10px;
+}
+.view .signature a {
+  color: blue;
+  text-decoration: none;
+}
+.view__zoom {
+  width: 100%;
+  margin-bottom: 1em;
+  display: flex;
+}
+.view__zoom-bar {
+  width: 100%;
+  height: 20px;
+  border-radius: 60px;
+  background: #f9f9f9;
+  box-shadow: inset 4px 4px 8px #d4d4d4, inset -4px -4px 8px #ffffff;
+}
+.view__zoom-bar div {
+  height: 100%;
+  border-radius: 10px;
+  transition: all 0.5s ease-in-out;
+}
+.view__zoom-value {
+  margin-left: 10px;
+  color: #999;
+}
 .view__image {
   background-image: url(image.ab08f687.jpg);
   height: 300px;
@@ -34,7 +64,7 @@ body {
   align-items: center;
   width: 100%;
   height: 50px;
-  margin-top: 2em;
+  margin-top: 1em;
   cursor: pointer;
   text-align: center;
   text-transform: capitalize;
@@ -50,10 +80,10 @@ body {
 
 .pointer {
   position: absolute;
-  bottom: 2em;
-  width: 150px;
-  height: 150px;
+  bottom: 1em;
   left: 50%;
+  width: 120px;
+  height: 120px;
   align-items: center;
   display: flex;
   transform: translateX(-50%);

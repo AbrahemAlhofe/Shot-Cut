@@ -23,6 +23,43 @@ body {
     margin: 20px auto;
     width: fit-content;
 
+    .signature {
+        font-family: monospace;
+        text-align: center;
+        margin-top: 10px;
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+    }
+
+    &__zoom {
+        width: 100%;
+        margin-bottom: 1em;
+        display: flex;
+
+        &-bar {
+            width: 100%;
+            height: 20px;
+
+            border-radius: 60px;
+            background: #f9f9f9;
+            box-shadow: inset 4px 4px 8px #d4d4d4, inset -4px -4px 8px #ffffff;
+
+            div {
+                height: 100%;
+                border-radius: 10px;
+                transition: all 0.5s ease-in-out;
+            }
+        }
+
+        &-value {
+            margin-left: 10px;
+            color: #999
+        }
+
+    }
+
     &__image {
         background-image: url(image.jpg);
         height: 300px;
@@ -39,7 +76,7 @@ body {
         width: 100%;
         height: 50px;
 
-        margin-top: 2em;
+        margin-top: 1em;
         cursor: pointer;
 
         text-align: center;
@@ -61,10 +98,12 @@ body {
 
 .pointer {
     position: absolute;
-    bottom: 2em;
-    width: 150px;
-    height: 150px;
+    
+    bottom: 1em;
     left: 50%;
+
+    width: 120px;
+    height: 120px;
     align-items: center;
     display: flex;
     transform: translateX(-50%);

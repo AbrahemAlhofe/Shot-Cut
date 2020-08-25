@@ -1,6 +1,6 @@
 export function onDragDrop (
     element,
-    mousedown: (e: MouseEvent) => void,
+    mousedown: (e: MouseEvent) => void | boolean,
     mousemove: (e: MouseEvent, position? : { x : number, y: number }) => any,
     mouseup: (e: MouseEvent) => void
 ) {
@@ -11,10 +11,12 @@ export function onDragDrop (
   let isMouseMove = false
 
   element.addEventListener("mousedown", (e: MouseEvent) => {
-    isMouseDown = true
-    isMouseUp = false
-    point_1 = { x: e.pageX, y: e.pageY };
-    mousedown(e);
+    console.log( mousedown(e) )
+    if ( mousedown(e) ) {
+      isMouseDown = true
+      isMouseUp = false
+      point_1 = { x: e.pageX, y: e.pageY };
+    }
   });
 
   document.body.addEventListener("mouseup", (e: MouseEvent) => {
@@ -40,8 +42,7 @@ export function absMax(num: number, limit: number): number {
   return Math.abs(num) > Math.abs(limit) ? limit : num;
 }
 
-export function compute< T extends Object >( data: T, handler: ( this: T ) => void): any {
-    console.log(data)
+export function compute< T extends Object >( data: T, handler: ( this: T ) => void): () => T | T {
     return new Proxy(() => data, {
       set (target, key, value) {
         target()[key] = value
@@ -61,3 +62,5 @@ export function inRange (num: number, min: number, max: number) {
   if ( num > max ) return max
   return num
 }
+
+export interface IPosition { x : number, y : number }

@@ -134,13 +134,16 @@ function onDragDrop(element, mousedown, mousemove, mouseup) {
   var isMouseDown = false;
   var isMouseMove = false;
   element.addEventListener("mousedown", function (e) {
-    isMouseDown = true;
-    isMouseUp = false;
-    point_1 = {
-      x: e.pageX,
-      y: e.pageY
-    };
-    mousedown(e);
+    console.log(mousedown(e));
+
+    if (mousedown(e)) {
+      isMouseDown = true;
+      isMouseUp = false;
+      point_1 = {
+        x: e.pageX,
+        y: e.pageY
+      };
+    }
   });
   document.body.addEventListener("mouseup", function (e) {
     if (isMouseDown && isMouseMove) {
@@ -169,7 +172,6 @@ function absMax(num, limit) {
 exports.absMax = absMax;
 
 function compute(data, handler) {
-  console.log(data);
   return new Proxy(function () {
     return data;
   }, {
@@ -196,14 +198,62 @@ function inRange(num, min, max) {
 }
 
 exports.inRange = inRange;
+},{}],"shots.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var View = document.querySelector(".view__image");
+
+var Shots =
+/** @class */
+function () {
+  function Shots() {
+    this.ShotsElement = document.querySelector('.shots-stack');
+  }
+
+  Shots.prototype.push = function (image) {
+    /*
+        Create Canvas
+    */
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    var aspectRatio = 2;
+    canvas.width = View.offsetWidth / aspectRatio;
+    canvas.height = View.offsetHeight / aspectRatio;
+    context.drawImage(image, data.ImagePosition["x"] / aspectRatio, data.ImagePosition["y"] / aspectRatio, canvas.width * SCALE, canvas.height * SCALE);
+    /*
+        Create Shot
+    */
+
+    var Shot = document.createElement("div");
+    Shot.classList.add("shot"); // Childrens
+
+    Shot.appendChild(canvas);
+    this.ShotsElement.appendChild(Shot);
+  };
+
+  return Shots;
+}();
+
+exports.default = Shots;
 },{}],"index.ts":[function(require,module,exports) {
 "use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var utils_1 = require("./utils");
+
+var shots_1 = __importDefault(require("./shots"));
 /* ===========
     Elements
 ============== */
@@ -211,20 +261,17 @@ var utils_1 = require("./utils");
 
 var Cursor = document.querySelector('.cursor');
 var Pointer = document.querySelector('.pointer');
-var Img = document.querySelector('.view__image');
+var View = document.querySelector('.view__image');
 var Button = document.querySelector('button');
-var ShotsStack = document.querySelector('.shots-stack');
 var UploadBtn = document.querySelector('.view__upload-btn');
+var Zoom_Bar = document.querySelector('.view__zoom-bar div');
+var Zoom_Value = document.querySelector(".view__zoom-value");
 var InputFile = document.querySelector('#upload');
-/* ===========
-Data
-============== */
-
-var LIMIT = Pointer.offsetHeight / 2 - Cursor.offsetHeight / 2;
-var SCALE = 5;
-var MAX_ASPECT_RATIO = 2;
-var MAX_IMAGE_WIDTH = 600;
-var data = {
+window.LIMIT = Pointer.offsetHeight / 2 - Cursor.offsetHeight / 2;
+window.SCALE = 3;
+window.MAX_ASPECT_RATIO = 2;
+window.MAX_IMAGE_WIDTH = 600;
+window.data = {
   Distance: {
     x: 0,
     y: 0
@@ -243,7 +290,7 @@ var data = {
   }, function () {}),
   ImageWidth: 0,
   ImageHeight: 0,
-  ImageSrc: window.getComputedStyle(Img).backgroundImage.slice(5, window.getComputedStyle(Img).backgroundImage.length - 2),
+  ImageSrc: window.getComputedStyle(View).backgroundImage.slice(5, window.getComputedStyle(View).backgroundImage.length - 2),
   ImageAspectRatio: 0
 };
 /* ===========
@@ -252,16 +299,21 @@ var data = {
 
 function updateView() {
   Cursor.style.transform = "translate(" + data.CursorPosition['x'] + "px, " + data.CursorPosition['y'] + "px)";
-  Img.style.backgroundPosition = data.ImagePosition['x'] + "px " + data.ImagePosition['y'] + "px";
-  if (data.isCursorMove) Img.classList.add("image--move");else Img.classList.remove("image--move");
+  View.style.backgroundPosition = data.ImagePosition['x'] + "px " + data.ImagePosition['y'] + "px";
+  if (data.isCursorMove) View.classList.add("image--move");else View.classList.remove("image--move");
   if (data.isCursorMove) Cursor.classList.add('cursor--move');else Cursor.classList.remove('cursor--move');
-  Img.style.backgroundImage = "url(" + data.ImageSrc + ")";
-  Img.style.backgroundSize = Img.offsetWidth * SCALE + "px " + Img.offsetHeight * SCALE + "px";
+  View.style.backgroundImage = "url(" + data.ImageSrc + ")";
+  View.style.backgroundSize = View.offsetWidth * SCALE + "px " + View.offsetHeight * SCALE + "px";
+  Zoom_Bar.style.width = SCALE / 5 * 100 + "%";
+  Zoom_Bar.style.backgroundImage = "linear-gradient(45deg, #FF5722 " + (100 - SCALE / 5 * 100) + "%, #FFC107)";
+  Zoom_Value.innerText = SCALE + "00%";
 }
 
 var interval;
 
-function mousedown(e) {}
+function mousedown(e) {
+  return true;
+}
 
 function mousemove(e, _a) {
   var x = _a.x,
@@ -298,48 +350,27 @@ img.onload = function () {
   data.ImageWidth = img.naturalWidth;
   data.ImageHeight = img.naturalHeight;
   data.ImageAspectRatio = data.ImageWidth / data.ImageHeight;
-  var height = 300;
+  var height = 300; // You can specify the value what do you want
+
   if (data.ImageAspectRatio > MAX_ASPECT_RATIO) height = MAX_IMAGE_WIDTH / data.ImageAspectRatio;
-  Img.style.height = height + "px";
-  Img.style.width = height * data.ImageAspectRatio + "px";
+  View.style.height = height + "px";
+  View.style.width = height * data.ImageAspectRatio + "px";
   data.ImagePosition = utils_1.compute({
-    x: (Img.offsetWidth - Img.offsetWidth * SCALE) * .5,
-    y: (Img.offsetHeight - Img.offsetHeight * SCALE) * .5
+    x: (View.offsetWidth - View.offsetWidth * SCALE) * 0.5,
+    y: (View.offsetHeight - View.offsetHeight * SCALE) * 0.5
   }, function () {
     var x = this.x + utils_1.absMax(data.Distance["x"], 5) * -1;
     var y = this.y + utils_1.absMax(data.Distance["y"], 5) * -1;
-    this.x = utils_1.inRange(x, Img.offsetWidth * -5 + Img.offsetWidth, 0);
-    this.y = utils_1.inRange(y, Img.offsetHeight * -5 + Img.offsetHeight, 0);
+    this.x = utils_1.inRange(x, View.offsetWidth * (SCALE * -1) + View.offsetWidth, 0);
+    this.y = utils_1.inRange(y, View.offsetHeight * (SCALE * -1) + View.offsetHeight, 0);
   });
   updateView();
 };
 
 img.src = data.ImageSrc;
-
-function createCanvas() {
-  var canvas = document.createElement('canvas');
-  var context = canvas.getContext("2d");
-  var aspectRatio = 2;
-  canvas.width = Img.offsetWidth / aspectRatio;
-  canvas.height = Img.offsetHeight / aspectRatio;
-  var imgWidth = canvas.width * SCALE;
-  var imgHeight = canvas.height * SCALE;
-  var x = data.ImagePosition["x"] / aspectRatio;
-  var y = data.ImagePosition["y"] / aspectRatio;
-  context.drawImage(img, x, y, imgWidth, imgHeight);
-  return canvas;
-}
-
-function createShot() {
-  var Shot = document.createElement('div');
-  Shot.classList.add('shot'); // Childrens
-
-  var Canvas = Shot.appendChild(createCanvas());
-  return Shot;
-}
-
+var shots = new shots_1.default();
 Button.addEventListener('click', function () {
-  return ShotsStack.appendChild(createShot());
+  return shots.push(img);
 });
 UploadBtn.addEventListener('click', function () {
   InputFile.click();
@@ -355,7 +386,20 @@ UploadBtn.addEventListener('click', function () {
     console.log(image);
   });
 });
-},{"./utils":"utils.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+utils_1.onDragDrop(Zoom_Bar, // Mouse Down
+function (e) {
+  var start = Zoom_Bar.getBoundingClientRect().left + Zoom_Bar.offsetWidth - 100;
+  return e.pageX > start;
+}, // Mouse Move
+function (e) {
+  var unit = Zoom_Bar.parentElement.offsetWidth / 5;
+  var x = e.pageX - Zoom_Bar.getBoundingClientRect().left;
+  SCALE = Math.round(x / unit);
+  console.log(x, x / unit);
+  updateView();
+}, // Mouse Up
+function () {});
+},{"./utils":"utils.ts","./shots":"shots.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -383,7 +427,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53318" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57453" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
